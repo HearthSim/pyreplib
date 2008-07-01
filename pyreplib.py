@@ -60,6 +60,8 @@ class Replay(object):
         return str(self)
 
     def _decode_headers(self, data):
+        '''Takes a header binary string and assigns the different
+        attributes.  No return value.'''
         t = struct.unpack(HEADER_STRUCT_FORMAT, data)
         self.game_engine = t[0]
         self.game_frames = t[1]
@@ -72,6 +74,7 @@ class Replay(object):
         self.players     = list(self._decode_players(t[8]))
 
     def get_engine_name(self):
+        '''English name of the replay's Starcraft engine'''
         if self.game_engine == 0:
             return 'Starcraft'
         else:
@@ -79,10 +82,12 @@ class Replay(object):
     engine_name = property(get_engine_name)
 
     def get_date(self):
+        '''Take the timestamp and return a datetime.'''
         return datetime.datetime.fromtimestamp(self.timestamp)
     date = property(get_date)
 
     def _decode_player(self, player_data):
+        '''Takes a 36 byte string and returns a Player object.'''
         t = struct.unpack(PLAYER_STRUCT_FORMAT, player_data)
         return Player(name=t[4],
                       race=t[3],
@@ -91,10 +96,13 @@ class Replay(object):
                       number=t[0])
 
     def _decode_players(self, players_data):
+        '''Takes a 432 byte string and yields 12 Player objects.'''
         for i in xrange(PLAYER_NUMBER):
             yield self._decode_player(players_data[i*36 : (i+1)*36])
 
     def is_valid(self):
+        '''Verifies if the replay ID found in the replay file
+        matches the one of all Starcraft replays.'''
         return self.replay_id == REPLAY_ID
 
 
@@ -114,6 +122,8 @@ class Player(object):
         return str(self)
 
     def get_race_name(self):
+        '''Return english description of player's race.  jca's lib indicates
+        that there's a race 6, but I (nor he) have any idea what it does.'''
         d = {
             0: 'Zerg',
             1: 'Terran',

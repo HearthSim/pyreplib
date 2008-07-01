@@ -157,6 +157,7 @@ class TestMockReplay(unittest.TestCase): # {{{1
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, # Unknown
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, # Unknown
         ]
+
         header = struct.pack(HEADER_PACK_FORMAT, *data)
         self.rep._decode_headers(header)
         self.assertEquals(self.rep.game_engine, 1)
@@ -170,6 +171,13 @@ class TestMockReplay(unittest.TestCase): # {{{1
         self.assertEquals(self.rep.map_height, 128)
         self.assertEquals(self.rep.creator, 'gnuvince')
         self.assertEquals(self.rep.map_name, 'Lost Temple')
+
+        # Starcraft instead of Broodwar
+        data[0] = 0
+        header = struct.pack(HEADER_PACK_FORMAT, *data)
+        self.rep._decode_headers(header)
+        self.assertEquals(self.rep.game_engine, 0)
+        self.assertEquals(self.rep.engine_name, 'Starcraft')
 
 
 
