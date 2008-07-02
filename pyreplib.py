@@ -46,12 +46,26 @@ class InvalidReplayException(Exception): pass
 
 
 class Replay(object):
-    def __init__(self, filename):
+    def open(filename):
         data = _unpack.unpack(filename)
         self.replay_id = data[0]
         if not self.is_valid():
             raise InvalidReplayException
         self._decode_headers(data[1])
+    open = staticmethod(open)
+
+    def get_engine_name(self):
+        '''English name of the replay's Starcraft engine'''
+        if self.game_engine == 0:
+            return 'Starcraft'
+        else:
+            return 'Broodwar'
+    engine_name = property(get_engine_name)
+
+    def get_date(self):
+        '''Take the timestamp and return a datetime.'''
+        return datetime.datetime.fromtimestamp(self.timestamp)
+    date = property(get_date)
 
     def __str__(self):
         return '<Replay: %s>' % self.game_name
@@ -72,19 +86,6 @@ class Replay(object):
         self.creator     = from_nullstr(t[6])
         self.map_name    = from_nullstr(t[7])
         self.players     = list(self._decode_players(t[8]))
-
-    def get_engine_name(self):
-        '''English name of the replay's Starcraft engine'''
-        if self.game_engine == 0:
-            return 'Starcraft'
-        else:
-            return 'Broodwar'
-    engine_name = property(get_engine_name)
-
-    def get_date(self):
-        '''Take the timestamp and return a datetime.'''
-        return datetime.datetime.fromtimestamp(self.timestamp)
-    date = property(get_date)
 
     def _decode_player(self, player_data):
         '''Takes a 36 byte string and returns a Player object.'''
@@ -124,11 +125,14 @@ class Player(object):
     def get_race_name(self):
         '''Return english description of player's race.  jca's lib indicates
         that there's a race 6, but I (nor he) have any idea what it does.'''
-        d = {
-            0: 'Zerg',
-            1: 'Terran',
-            2: 'Protoss',
-            6: 'Race 6',
-        }
-        return d[self.race]
+        if self.race == 0:
+            return 'Zerg'
+        elif self.race == 1:
+            return 'Terran'
+        elif self.race == 2:
+            return 'Protoss'
+        elif self.race == 6:
+            return 'Race 6'
+        else:
+            return ''
     race_name = property(get_race_name)

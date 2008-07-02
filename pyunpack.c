@@ -14,7 +14,12 @@ unpack_unpack(PyObject *self, PyObject *args)
     const char *filename;
     byte *buf;
     dword rep;
-    PyObject *rep_id, *header, *tuple;
+    dword cmd_size;
+    PyObject *rep_id,
+             *header,
+             *cmds,
+             *tuple;
+
 
     if (!PyArg_ParseTuple(args, "s", &filename))
         return NULL;

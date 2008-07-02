@@ -19,15 +19,9 @@ class TestHelperFunctions(unittest.TestCase): # {{{1
         self.assertEquals(pyreplib.from_nullstr('foo'), 'foo')
 
 
-# This class can be used without doing any I/O.
-class MockReplay(pyreplib.Replay):
-    def __init__(self):
-        pass
-
-
 class TestMockReplay(unittest.TestCase): # {{{1
     def setUp(self):
-        self.rep = MockReplay()
+        self.rep = pyreplib.Replay()
         self.players = ''.join(struct.pack(PLAYER_PACK_FORMAT, *t) for t in (
             # Num   Slot    Type    Race    Byte    Name
             ( 0,    -1,     0,      0,      0,      ""),
