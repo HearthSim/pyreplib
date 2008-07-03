@@ -2,26 +2,26 @@ import unittest
 import datetime
 import struct
 
-import pyreplib
+import replay
 
 # Need to put in the useless bytes, so we replace 'x' (pad byte) with 'B'.
-PLAYER_PACK_FORMAT = pyreplib.PLAYER_STRUCT_FORMAT.replace('x', 'B')
-HEADER_PACK_FORMAT = pyreplib.HEADER_STRUCT_FORMAT.replace('x', 'B')
+PLAYER_PACK_FORMAT = replay.PLAYER_STRUCT_FORMAT.replace('x', 'B')
+HEADER_PACK_FORMAT = replay.HEADER_STRUCT_FORMAT.replace('x', 'B')
 
 class TestHelperFunctions(unittest.TestCase): # {{{1
     def test_from_nullstr(self):
-        self.assertEquals(pyreplib.from_nullstr(''), '')
-        self.assertEquals(pyreplib.from_nullstr('\0'), '')
-        self.assertEquals(pyreplib.from_nullstr('\0\0\0\0'), '')
-        self.assertEquals(pyreplib.from_nullstr('\0a'), '')
-        self.assertEquals(pyreplib.from_nullstr('foo\0'), 'foo')
-        self.assertEquals(pyreplib.from_nullstr('foo\0a'), 'foo')
-        self.assertEquals(pyreplib.from_nullstr('foo'), 'foo')
+        self.assertEquals(replay.from_nullstr(''), '')
+        self.assertEquals(replay.from_nullstr('\0'), '')
+        self.assertEquals(replay.from_nullstr('\0\0\0\0'), '')
+        self.assertEquals(replay.from_nullstr('\0a'), '')
+        self.assertEquals(replay.from_nullstr('foo\0'), 'foo')
+        self.assertEquals(replay.from_nullstr('foo\0a'), 'foo')
+        self.assertEquals(replay.from_nullstr('foo'), 'foo')
 
 
 class TestMockReplay(unittest.TestCase): # {{{1
     def setUp(self):
-        self.rep = pyreplib.Replay()
+        self.rep = replay.Replay()
         self.players = ''.join(struct.pack(PLAYER_PACK_FORMAT, *t) for t in (
             # Num   Slot    Type    Race    Byte    Name
             ( 0,    -1,     0,      0,      0,      ""),
