@@ -46,13 +46,13 @@ class InvalidReplayException(Exception): pass
 
 
 class Replay(object):
-    def open(filename):
-        data = _unpack.unpack(filename)
-        self.replay_id = data[0]
-        if not self.is_valid():
-            raise InvalidReplayException
-        self._decode_headers(data[1])
-    open = staticmethod(open)
+    # XXX: What should __init__ do?
+
+    def __init__(self, filename):
+        self.data = _unpack.unpack(filename)
+        self.replay_id = self.data[0]
+        self._decode_headers(self.data[1])
+    #open = staticmethod(open)
 
     def get_engine_name(self):
         '''English name of the replay's Starcraft engine'''
@@ -117,7 +117,7 @@ class Player(object):
         self.human = self.slot != -1
 
     def __str__(self):
-        return '<Player: %s (%s)>' % (self.name, self.race_name())
+        return '<Player: %s (%s)>' % (self.name, self.race_name)
 
     def __repr__(self):
         return str(self)

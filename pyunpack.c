@@ -14,10 +14,10 @@ unpack_unpack(PyObject *self, PyObject *args)
     const char *filename;
     byte *buf;
     dword rep;
-    dword cmd_size;
+    unsigned actions_size;
     PyObject *rep_id,
              *header,
-             *cmds,
+             *actions,
              *tuple;
 
 
@@ -43,12 +43,28 @@ unpack_unpack(PyObject *self, PyObject *args)
     unpack_section(fd, buf, sizeof(byte) * HEADER_SIZE);
     header = PyString_FromStringAndSize((char *)buf,
                                         sizeof(byte) * HEADER_SIZE);
+    free(buf);
+    buf = NULL;
+
+    /* Get the size of the commands and then allocate them. */
+    unpack_section(fd, (byte *)&actions_size, sizeof(actions_size));
+    buf = malloc(sizeof(byte) * actions_size);
+    if (buf == NULL) {
+        PyErr_SetString(PyExc_MemoryError, "Could not allocate space.");
+        return NULL;
+    }
+    unpack_section(fd, buf, actions_size);
+    actions = PyString_FromStringAndSize((char *)buf,
+                                         sizeof(byte) * actions_size);
+    free(buf);
+    buf = NULL;
 
     fclose(fd);
 
-    tuple = PyTuple_New(2);
+    tuple = PyTuple_New(3);
     PyTuple_SetItem(tuple, 0, rep_id);
     PyTuple_SetItem(tuple, 1, header);
+    PyTuple_SetItem(tuple, 2, actions);
     return tuple;
 }
 
