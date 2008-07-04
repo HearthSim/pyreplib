@@ -5,7 +5,7 @@ from pyreplib.datatypes import Byte, Word, DWord
 class ReadError(IOError):
     pass
 
-class ActionUnpacker(object):
+class Action(object):
     def __init__(self, buf):
         self.buf = buf
 
@@ -28,6 +28,9 @@ class ActionUnpacker(object):
         except ReadError:
             pass
 
-class Selection(Action):
-    count = Byte(1)
-    units = Word(count)
+class Action0x09(Action):
+    name = 'Select'
+    fields = (
+        ('count', Byte()),
+        ('units', Word() * count)
+    )
