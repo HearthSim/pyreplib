@@ -1,7 +1,7 @@
 import datetime
 import struct
 
-import _unpack
+from pyreplib import _unpack
 
 REPLAY_ID     = 0x53526572
 PLAYER_NUMBER = 12
@@ -52,7 +52,6 @@ class Replay(object):
         self.data = _unpack.unpack(filename)
         self.replay_id = self.data[0]
         self._decode_headers(self.data[1])
-    #open = staticmethod(open)
 
     def get_engine_name(self):
         '''English name of the replay's Starcraft engine'''
@@ -99,7 +98,9 @@ class Replay(object):
     def _decode_players(self, players_data):
         '''Takes a 432 byte string and yields 12 Player objects.'''
         for i in xrange(PLAYER_NUMBER):
-            yield self._decode_player(players_data[i*36 : (i+1)*36])
+            player = self._decode_player(players_data[i*36 : (i+1)*36])
+            if player.human:
+                yield player
 
     def is_valid(self):
         '''Verifies if the replay ID found in the replay file

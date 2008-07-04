@@ -2,7 +2,7 @@ import unittest
 import datetime
 import struct
 
-import replay
+from pyreplib import replay
 
 # Need to put in the useless bytes, so we replace 'x' (pad byte) with 'B'.
 PLAYER_PACK_FORMAT = replay.PLAYER_STRUCT_FORMAT.replace('x', 'B')
@@ -18,10 +18,14 @@ class TestHelperFunctions(unittest.TestCase): # {{{1
         self.assertEquals(replay.from_nullstr('foo\0a'), 'foo')
         self.assertEquals(replay.from_nullstr('foo'), 'foo')
 
+# TestReplay {{{1
+class MockReplay(replay.Replay):
+    def __init__(self):
+        pass
 
-class TestMockReplay(unittest.TestCase): # {{{1
+class TestReplay(unittest.TestCase):
     def setUp(self):
-        self.rep = replay.Replay()
+        self.rep = MockReplay()
         self.players = ''.join(struct.pack(PLAYER_PACK_FORMAT, *t) for t in (
             # Num   Slot    Type    Race    Byte    Name
             ( 0,    -1,     0,      0,      0,      ""),
@@ -93,27 +97,9 @@ class TestMockReplay(unittest.TestCase): # {{{1
 
     def test_decode_players(self):
         L = list(self.rep._decode_players(self.players))
-        self.assertEquals(len(L), 12)
+        self.assertEquals(len(L), 2)
 
         player = L[0]
-        self.assertEquals(player.name, '')
-        self.assertEquals(player.race, 0)
-        self.assertEquals(player.race_name, 'Zerg')
-        self.assertEquals(player.type, 0)
-        self.assertEquals(player.slot, -1)
-        self.assertEquals(player.number, 0)
-        self.assertEquals(player.human, False)
-
-        player = L[1]
-        self.assertEquals(player.name, 'Zerg CPU')
-        self.assertEquals(player.race, 0)
-        self.assertEquals(player.race_name, 'Zerg')
-        self.assertEquals(player.type, 1)
-        self.assertEquals(player.slot, -1)
-        self.assertEquals(player.number, 1)
-        self.assertEquals(player.human, False)
-
-        player = L[2]
         self.assertEquals(player.name, 'Terran Player')
         self.assertEquals(player.race, 1)
         self.assertEquals(player.race_name, 'Terran')
@@ -122,7 +108,7 @@ class TestMockReplay(unittest.TestCase): # {{{1
         self.assertEquals(player.number, 2)
         self.assertEquals(player.human, True)
 
-        player = L[3]
+        player = L[1]
         self.assertEquals(player.name, 'Protoss Player')
         self.assertEquals(player.race, 2)
         self.assertEquals(player.race_name, 'Protoss')

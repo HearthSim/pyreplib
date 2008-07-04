@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+
+import unittest
+
+from tests.test_datatypes import TestDataTypes
+from tests.test_replay import (TestReplay,
+                               TestHelperFunctions)
+
+unittest.main()
