@@ -1,5 +1,7 @@
 import struct
 
+from pyreplib.datatypes import Byte, Word, DWord
+
 class ReadError(IOError):
     pass
 
@@ -25,3 +27,7 @@ class ActionUnpacker(object):
             yield action_id
         except ReadError:
             pass
+
+class Selection(Action):
+    count = Byte(1)
+    units = Word(count)
