@@ -1,7 +1,9 @@
 import datetime
 import struct
+from cStringIO import StringIO
 
 from pyreplib import _unpack
+from pyreplib.actions import action_classes
 
 REPLAY_ID     = 0x53526572
 PLAYER_NUMBER = 12
@@ -106,7 +108,25 @@ class Replay(object):
 
 
     def _decode_actions(self, action_data):
-        pass
+        data_length = len(action_data)
+        buf = StringIO(action_data)
+        while True:
+            tick, block_length = struct.unpack('< I B', buf.read(5))
+            while block_length:
+                player_id, action_id = struct.unpack('< B B', buf.read(2))
+                block_length -= 2
+                action_cls = action_classes.get(action_id)
+                if action_cls is None:
+                    print 'Unknown Action', hex(action_id)
+                    continue
+                action = action_cls(tick, player_id)
+                n = action.read(buf)
+                print player_id, action
+                block_length -= n
+
+    def get_player(self, id):
+        return self.players[id]
+
 
 
 class Player(object):
@@ -119,10 +139,10 @@ class Player(object):
         self.human = self.slot != -1
 
     def __str__(self):
-        return '<Player: %s (%s)>' % (self.name, self.race_name)
+        return self.name
 
     def __repr__(self):
-        return str(self)
+        return '<Player: %s (%s)>' % (self.name, self.race_name)
 
     def get_race_name(self):
         '''Return english description of player's race.  jca's lib indicates
