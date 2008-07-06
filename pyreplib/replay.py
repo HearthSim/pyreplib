@@ -46,12 +46,16 @@ class InvalidReplayException(Exception): pass
 
 
 class Replay(object):
-    # XXX: What should __init__ do?
-
     def __init__(self, filename):
         self.data = _unpack.unpack(filename)
         self.replay_id = self.data[0]
         self._decode_headers(self.data[1])
+
+    def __str__(self):
+        return '<Replay: %s>' % self.game_name
+
+    def __repr__(self):
+        return str(self)
 
     def get_engine_name(self):
         '''English name of the replay's Starcraft engine'''
@@ -66,11 +70,9 @@ class Replay(object):
         return datetime.datetime.fromtimestamp(self.timestamp)
     date = property(get_date)
 
-    def __str__(self):
-        return '<Replay: %s>' % self.game_name
-
-    def __repr__(self):
-        return str(self)
+    def is_valid(self):
+        '''A replay is considered valid when its id is 0x53526572.'''
+        return self.replay_id == REPLAY_ID
 
     def _decode_headers(self, data):
         '''Takes a header binary string and assigns the different
@@ -102,10 +104,9 @@ class Replay(object):
             if player.human:
                 yield player
 
-    def is_valid(self):
-        '''Verifies if the replay ID found in the replay file
-        matches the one of all Starcraft replays.'''
-        return self.replay_id == REPLAY_ID
+
+    def _decode_actions(self, action_data):
+        pass
 
 
 class Player(object):

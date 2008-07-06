@@ -8,7 +8,7 @@ from pyreplib import replay
 PLAYER_PACK_FORMAT = replay.PLAYER_STRUCT_FORMAT.replace('x', 'B')
 HEADER_PACK_FORMAT = replay.HEADER_STRUCT_FORMAT.replace('x', 'B')
 
-class TestHelperFunctions(unittest.TestCase): # {{{1
+class TestHelperFunctions(unittest.TestCase):
     def test_from_nullstr(self):
         self.assertEquals(replay.from_nullstr(''), '')
         self.assertEquals(replay.from_nullstr('\0'), '')
@@ -18,7 +18,7 @@ class TestHelperFunctions(unittest.TestCase): # {{{1
         self.assertEquals(replay.from_nullstr('foo\0a'), 'foo')
         self.assertEquals(replay.from_nullstr('foo'), 'foo')
 
-# TestReplay {{{1
+
 class MockReplay(replay.Replay):
     def __init__(self):
         pass
