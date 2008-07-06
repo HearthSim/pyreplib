@@ -1,5 +1,5 @@
 import struct
-from copy import deepcopy
+from copy import copy
 
 from pyreplib.datastructures import Byte, Word, DWord, AssocList
 
@@ -231,6 +231,11 @@ class ReadError(Exception):
 
 class Field(object):
     '''
+    An object that represents one field in an action block.  Initialized
+    with a datatype (Byte, Word or DWord) and a size.  `size` can be an
+    integer or another Field instance, in which case the value that was
+    read by that field is used as the length of this field.
+
     `creation_counter` is used so that we can keep track of which fields
     were created first in the different Actions.
     '''
@@ -256,13 +261,18 @@ class Field(object):
             raise TypeError('"size" must be an int or a Field')
 
     def read(self, buf):
+        # We call `_get_size()` here instead of in the constructor
+        # because if the size is the value of a previous field, we
+        # have read that previous field.
         format = '<%d%s' % (self._get_size(), self.datatype)
         length = struct.calcsize(format)
         s = buf.read(length)
-        if len(s) != length:
-            raise ReadError('Could not read %d bytes, only %d available'
+        try:
+            t = struct.unpack(format, s)
+        except struct.error:
+            raise  ReadError('Could not read %d bytes, only %d available'
                             % (length, len(s)))
-        t = struct.unpack(format, s)
+        # This is not very type-safe, but it's certainly convenient.
         if len(t) == 1:
             self.data = t[0]
         else:
@@ -306,8 +316,7 @@ class Action(object):
         self.tick = tick
         # We make a copy of `base_fields`, which belong to the _class_,
         # into `fields`, which belongs to the _instance_.
-        self.fields = deepcopy(self.base_fields)
-
+        self.fields = copy(self.base_fields)
 
     def __str__(self):
         return '<Action (%s)>' % self.name
