@@ -169,9 +169,9 @@ unit_types = {
     0x6B: 'ComSat',
     0x6C: 'Nuclear Silo',
     0x6D: 'Supply Depot',
-    0x6E: 'Refinery //refinery?',
+    0x6E: 'Refinery',
     0x6F: 'Barracks',
-    0x70: 'Academy //Academy?',
+    0x70: 'Academy',
     0x71: 'Factory',
     0x72: 'Starport',
     0x73: 'Control Tower',
@@ -282,10 +282,9 @@ class Field(object):
 
 class ActionBase(type):
     '''
-    Meta-class for all Action objects.  This will set a `fields`
-    attribute containing an AssocList of the binary fields to
-    read, ordered by their creation_count (as specified in
-    datatypes.DataType.)
+    Meta-class for all Action objects.  This will set a `base_fields`
+    attribute containing an AssocList of the binary fields to read, ordered by
+    their creation_count (as specified in datatypes.DataType.)
     '''
     def __new__(cls, name, base, attrs):
         fields = list(ActionBase.get_declared_fields(attrs))
