@@ -5,6 +5,7 @@ from cStringIO import StringIO
 from pyreplib import _unpack
 from pyreplib.actions import action_classes
 
+TICKS_PER_SECOND = 23.8
 REPLAY_ID     = 0x53526572
 PLAYER_NUMBER = 12
 HEADER_STRUCT_FORMAT = (
@@ -52,6 +53,7 @@ class Replay(object):
         self.data = _unpack.unpack(filename)
         self.replay_id = self.data[0]
         self._decode_headers(self.data[1])
+        self._decode_actions(self.data[2])
 
     def __str__(self):
         return '<Replay: %s>' % self.game_name
@@ -89,6 +91,7 @@ class Replay(object):
         self.creator     = from_nullstr(t[6])
         self.map_name    = from_nullstr(t[7])
         self.players     = list(self._decode_players(t[8]))
+        self.humans      = [p for p in self.players if p.human]
 
     def _decode_player(self, player_data):
         '''Takes a 36 byte string and returns a Player object.'''
@@ -103,29 +106,29 @@ class Replay(object):
         '''Takes a 432 byte string and yields 12 Player objects.'''
         for i in xrange(PLAYER_NUMBER):
             player = self._decode_player(players_data[i*36 : (i+1)*36])
-            if player.human:
-                yield player
+            yield player
 
 
     def _decode_actions(self, action_data):
         data_length = len(action_data)
         buf = StringIO(action_data)
-        while True:
+        while buf.tell() != data_length:
             tick, block_length = struct.unpack('< I B', buf.read(5))
             while block_length:
                 player_id, action_id = struct.unpack('< B B', buf.read(2))
                 block_length -= 2
                 action_cls = action_classes.get(action_id)
+                # Skip over unknown actions
                 if action_cls is None:
-                    print 'Unknown Action', hex(action_id)
                     continue
-                action = action_cls(tick, player_id)
+                action = action_cls(tick)
+                player = self.get_player(player_id)
+                player.actions.append(action)
                 n = action.read(buf)
-                print player_id, action
                 block_length -= n
 
     def get_player(self, id):
-        return self.players[id]
+        return [p for p in self.players if p.slot == id][0]
 
 
 
@@ -137,6 +140,7 @@ class Player(object):
         self.slot = slot
         self.number = number
         self.human = self.slot != -1
+        self.actions = []
 
     def __str__(self):
         return self.name
@@ -158,3 +162,10 @@ class Player(object):
         else:
             return ''
     race_name = property(get_race_name)
+
+    def calculate_apm(self):
+        try:
+            minutes = self.actions[-1].tick / TICKS_PER_SECOND / 60.0
+            return int(len(self.actions) / minutes)
+        except Exception:
+            return 0

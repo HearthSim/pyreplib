@@ -256,7 +256,7 @@ class Field(object):
             raise TypeError('"size" must be an int or a Field')
 
     def read(self, buf):
-        format = '%d%s' % (self._get_size(), self.datatype)
+        format = '<%d%s' % (self._get_size(), self.datatype)
         length = struct.calcsize(format)
         s = buf.read(length)
         if len(s) != length:
@@ -302,9 +302,8 @@ class Action(object):
     '''
     __metaclass__ = ActionBase
 
-    def __init__(self, tick, player):
+    def __init__(self, tick):
         self.tick = tick
-        self.player = player
         # We make a copy of `base_fields`, which belong to the _class_,
         # into `fields`, which belongs to the _instance_.
         self.fields = deepcopy(self.base_fields)
@@ -373,7 +372,7 @@ class Move(Action):
     pos_y = Field(Word, 1)
     unit_id = Field(Word, 1) # 0xFFFF for moving to X/Y, unit id if following
     unknown1 = Field(Word, 1)
-    unknown2 = Field(Word, 1)
+    unknown2 = Field(Byte, 1)
 
 
 class Attack(Action):
@@ -382,7 +381,7 @@ class Attack(Action):
     pos_y = Field(Word, 1)
     unit_id = Field(Word, 1) # 0xFFFF for moving to X/Y, unit id if following
     unknown = Field(Word, 1)
-    type = Field(Word, 1) # Taken from `attacks`
+    type = Field(Byte, 1) # Taken from `attacks`
     shifted = Field(Byte, 1) # 0x00 for normal, 0x01 for shifted attack
 
 
