@@ -5,8 +5,8 @@ from cStringIO import StringIO
 from pyreplib import _unpack
 from pyreplib.actions import action_classes
 
-TICKS_PER_SECOND = 23.8
-REPLAY_ID     = 0x53526572
+TICKS_PER_SECOND = 24
+REPLAY_ID = 0x53526572
 PLAYER_NUMBER = 12
 HEADER_STRUCT_FORMAT = (
     '<'    # Little-endian
@@ -44,6 +44,9 @@ def from_nullstr(s):
     else:
         return s[:i]
 
+
+def avg(L):
+    return sum(L) / len(L)
 
 class InvalidReplayException(Exception): pass
 
@@ -164,8 +167,19 @@ class Player(object):
     race_name = property(get_race_name)
 
     def calculate_apm(self):
-        try:
-            minutes = self.actions[-1].tick / TICKS_PER_SECOND / 60.0
-            return int(len(self.actions) / minutes)
-        except Exception:
-            return 0
+        one_minute = 60 * TICKS_PER_SECOND
+        def _count_actions():
+            minute = one_minute
+            n = 0
+            for action in self.actions:
+                if action.tick < minute:
+                    n += 1
+                else:
+                    yield n
+                    n = 0
+                    minute += one_minute
+        number_of_actions = list(_count_actions())
+        return (min(number_of_actions),
+                avg(number_of_actions),
+                max(number_of_actions))
+
