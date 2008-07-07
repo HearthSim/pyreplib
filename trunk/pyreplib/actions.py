@@ -320,10 +320,11 @@ class Action(object):
 
     def read(self, buf):
         length = 0
-        sorted_fields = sorted(self.base_fields.iteritems(),
-                               cmp=lambda a, b: cmp(a[1].creation_counter,
-                                                    b[1].creation_counter))
-        for (field_name, field) in sorted_fields:
+        fields = self.base_fields.items()
+        fields.sort(cmp=lambda a, b: cmp(a[1].creation_counter,
+                                         b[1].creation_counter))
+        print fields
+        for (field_name, field) in fields:
             length += field.read(buf)
             try:
                 setter = getattr(self, 'set_' + field_name)
@@ -360,8 +361,6 @@ class Build(Action):
     pos_y = Field(Word, 1)
     building_id = Field(Word, 1)
 
-    def set_building_type(self, x):
-        self.building_type = unit_types[x]
 
 class Vision(Action):
     id = 0x0D
