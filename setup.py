@@ -1,11 +1,14 @@
 from distutils.core import setup, Extension
 
-module1 = Extension('_unpack',
-                    sources=['src/pyunpack.c',
-                             'src/unpack.c'])
+pyunpack = Extension('_unpack',
+                     sources=['src/pyunpack.c',
+                              'src/unpack.c'])
 
 if __name__ == '__main__':
-    setup(name='Broodwar Replay File Unpacker',
-          version='0.1',
-          description='Helper C module.',
-          ext_modules=[module1])
+    setup(name='pyreplib',
+          author='Vincent Foley',
+          author_email='vfoleybourgon@yahoo.ca',
+          version='0.0.1',
+          description="Python library to read Starcraft's replay files",
+          packages=['pyreplib'],
+          ext_modules=[pyunpack])

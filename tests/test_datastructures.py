@@ -1,13 +1,6 @@
 import unittest
 
-from pyreplib.datastructures import Byte, Word, DWord, AssocList
-
-class TestDataTypes(unittest.TestCase):
-    def test_byte(self):
-        self.assertEquals(Byte, 'B')
-        self.assertEquals(Word, 'H')
-        self.assertEquals(DWord, 'I')
-
+from pyreplib.datastructures import AssocList
 
 class TestAssocList(unittest.TestCase):
     def setUp(self):
