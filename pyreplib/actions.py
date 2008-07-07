@@ -1,7 +1,5 @@
 import struct
 
-from pyreplib.datastructures import AssocList
-
 Byte = 'B'
 Word = 'H'
 DWord = 'I'
@@ -290,10 +288,7 @@ class ActionBase(type):
     their creation_count (as specified in datatypes.DataType.)
     '''
     def __new__(cls, name, base, attrs):
-        fields = list(ActionBase.get_declared_fields(attrs))
-        fields.sort(cmp=lambda a,b: cmp(a[1].creation_counter,
-                                        b[1].creation_counter))
-        attrs['base_fields'] = AssocList(fields)
+        attrs['base_fields'] = dict(ActionBase.get_declared_fields(attrs))
         attrs['name'] = attrs.get('name') or name
         return super(ActionBase, cls).__new__(cls, name, base, attrs)
 
@@ -325,7 +320,10 @@ class Action(object):
 
     def read(self, buf):
         length = 0
-        for (field_name, field) in self.base_fields:
+        sorted_fields = sorted(self.base_fields.iteritems(),
+                               cmp=lambda a, b: cmp(a[1].creation_counter,
+                                                    b[1].creation_counter))
+        for (field_name, field) in sorted_fields:
             length += field.read(buf)
             setattr(self, field_name, field.data)
         return length

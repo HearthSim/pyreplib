@@ -2,7 +2,6 @@
 
 import unittest
 
-from tests.test_datastructures import TestAssocList
 from tests.test_replay import TestReplay, TestHelperFunctions
 
 unittest.main()
