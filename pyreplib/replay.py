@@ -2,7 +2,7 @@ import datetime
 import struct
 from cStringIO import StringIO
 
-from pyreplib import _unpack
+import _unpack
 from pyreplib.actions import action_classes
 
 TICKS_PER_SECOND = 24
@@ -142,7 +142,7 @@ class Player(object):
         self.type = type
         self.slot = slot
         self.number = number
-        self.human = self.slot != -1
+        self.human = self.slot != -1 and self.type != 0
         self.actions = []
         self.__actions_per_minute = None
 
