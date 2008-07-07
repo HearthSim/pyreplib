@@ -144,6 +144,7 @@ class Player(object):
         self.number = number
         self.human = self.slot != -1
         self.actions = []
+        self.__actions_per_minute = None
 
     def __str__(self):
         return self.name
@@ -166,9 +167,9 @@ class Player(object):
             return ''
     race_name = property(get_race_name)
 
-    def calculate_apm(self):
-        one_minute = 60 * TICKS_PER_SECOND
-        def _count_actions():
+    def actions_per_minute(self):
+        def _get_actions():
+            one_minute = 60 * TICKS_PER_SECOND
             minute = one_minute
             n = 0
             for action in self.actions:
@@ -178,7 +179,16 @@ class Player(object):
                     yield n
                     n = 0
                     minute += one_minute
-        number_of_actions = list(_count_actions())
+
+        if self.__actions_per_minute is None:
+            self.__actions_per_minute = list(_get_actions())
+        return self.__actions_per_minute
+
+    def apm_stats(self):
+        '''
+        Returns a tuple containing the minimum, average and maximum APM.
+        '''
+        number_of_actions = self.actions_per_minute()
         return (min(number_of_actions),
                 avg(number_of_actions),
                 max(number_of_actions))

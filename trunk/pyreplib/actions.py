@@ -1,7 +1,10 @@
 import struct
-from copy import copy
 
-from pyreplib.datastructures import Byte, Word, DWord, AssocList
+from pyreplib.datastructures import AssocList
+
+Byte = 'B'
+Word = 'H'
+DWord = 'I'
 
 attacks = {
     0x00: 'Move with right click',
@@ -313,9 +316,6 @@ class Action(object):
 
     def __init__(self, tick):
         self.tick = tick
-        # We make a copy of `base_fields`, which belong to the _class_,
-        # into `fields`, which belongs to the _instance_.
-        self.fields = copy(self.base_fields)
 
     def __str__(self):
         return '<Action (%s)>' % self.name
@@ -325,8 +325,9 @@ class Action(object):
 
     def read(self, buf):
         length = 0
-        for (field_name, field) in self.fields:
+        for (field_name, field) in self.base_fields:
             length += field.read(buf)
+            setattr(self, field_name, field.data)
         return length
 
 

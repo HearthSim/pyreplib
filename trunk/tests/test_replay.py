@@ -97,9 +97,18 @@ class TestReplay(unittest.TestCase):
 
     def test_decode_players(self):
         L = list(self.rep._decode_players(self.players))
-        self.assertEquals(len(L), 2)
+        self.assertEquals(len(L), 12)
 
-        player = L[0]
+        player = L[1]
+        self.assertEquals(player.name, 'Zerg CPU')
+        self.assertEquals(player.race, 0)
+        self.assertEquals(player.race_name, 'Zerg')
+        self.assertEquals(player.type, 1)
+        self.assertEquals(player.slot, -1)
+        self.assertEquals(player.number, 1)
+        self.assertEquals(player.human, False)
+
+        player = L[2]
         self.assertEquals(player.name, 'Terran Player')
         self.assertEquals(player.race, 1)
         self.assertEquals(player.race_name, 'Terran')
@@ -108,7 +117,7 @@ class TestReplay(unittest.TestCase):
         self.assertEquals(player.number, 2)
         self.assertEquals(player.human, True)
 
-        player = L[1]
+        player = L[3]
         self.assertEquals(player.name, 'Protoss Player')
         self.assertEquals(player.race, 2)
         self.assertEquals(player.race_name, 'Protoss')
@@ -151,6 +160,8 @@ class TestReplay(unittest.TestCase):
         self.assertEquals(self.rep.map_height, 128)
         self.assertEquals(self.rep.creator, 'gnuvince')
         self.assertEquals(self.rep.map_name, 'Lost Temple')
+        self.assertEquals(len(self.rep.players), 12)
+        self.assertEquals(len(self.rep.humans), 2)
 
         # Starcraft instead of Broodwar
         data[0] = 0

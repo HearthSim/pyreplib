@@ -1,9 +1,5 @@
 import struct
 
-Byte = 'B'
-Word = 'H'
-DWord = 'I'
-
 class AssocList(list):
     def __getitem__(self, key):
         for k, v in self:
