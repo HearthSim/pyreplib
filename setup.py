@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 
-pyunpack = Extension('_unpack',
+pyunpack = Extension('pyreplib/_unpack',
                      sources=['src/pyunpack.c',
                               'src/unpack.c'])
 

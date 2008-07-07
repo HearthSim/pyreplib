@@ -2,7 +2,7 @@ import datetime
 import struct
 from cStringIO import StringIO
 
-import _unpack
+from pyreplib import _unpack
 from pyreplib.actions import action_classes
 
 TICKS_PER_SECOND = 24
@@ -93,8 +93,8 @@ class Replay(object):
         self.map_height  = t[5]
         self.creator     = from_nullstr(t[6])
         self.map_name    = from_nullstr(t[7])
-        self.players     = list(self._decode_players(t[8]))
-        self.humans      = [p for p in self.players if p.human]
+        self.player_slots = list(self._decode_players(t[8]))
+        self.players     = [p for p in self.player_slots if p.human]
 
     def _decode_player(self, player_data):
         '''Takes a 36 byte string and returns a Player object.'''

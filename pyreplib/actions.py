@@ -285,10 +285,13 @@ class ActionBase(type):
     '''
     Meta-class for all Action objects.  This will set a `base_fields`
     attribute containing an AssocList of the binary fields to read, ordered by
-    their creation_count (as specified in datatypes.DataType.)
+    their creation_counter (as specified in datatypes.DataType.)
     '''
     def __new__(cls, name, base, attrs):
-        attrs['base_fields'] = dict(ActionBase.get_declared_fields(attrs))
+        sorted_fields = sorted(ActionBase.get_declared_fields(attrs),
+                               cmp=lambda a, b: cmp(a[1].creation_counter,
+                                                    b[1].creation_counter))
+        attrs['base_fields'] = dict(sorted_fields)
         attrs['name'] = attrs.get('name') or name
         return super(ActionBase, cls).__new__(cls, name, base, attrs)
 
@@ -320,10 +323,7 @@ class Action(object):
 
     def read(self, buf):
         length = 0
-        sorted_fields = sorted(self.base_fields.iteritems(),
-                               cmp=lambda a, b: cmp(a[1].creation_counter,
-                                                    b[1].creation_counter))
-        for (field_name, field) in sorted_fields:
+        for (field_name, field) in self.base_fields.iteritems():
             length += field.read(buf)
             setattr(self, field_name, field.data)
         return length

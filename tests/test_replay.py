@@ -160,8 +160,8 @@ class TestReplay(unittest.TestCase):
         self.assertEquals(self.rep.map_height, 128)
         self.assertEquals(self.rep.creator, 'gnuvince')
         self.assertEquals(self.rep.map_name, 'Lost Temple')
-        self.assertEquals(len(self.rep.players), 12)
-        self.assertEquals(len(self.rep.humans), 2)
+        self.assertEquals(len(self.rep.player_slots), 12)
+        self.assertEquals(len(self.rep.players), 2)
 
         # Starcraft instead of Broodwar
         data[0] = 0
