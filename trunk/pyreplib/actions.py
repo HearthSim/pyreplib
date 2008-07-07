@@ -323,7 +323,6 @@ class Action(object):
         fields = self.base_fields.items()
         fields.sort(cmp=lambda a, b: cmp(a[1].creation_counter,
                                          b[1].creation_counter))
-        print fields
         for (field_name, field) in fields:
             length += field.read(buf)
             try:
