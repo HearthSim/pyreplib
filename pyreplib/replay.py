@@ -113,6 +113,8 @@ class Replay(object):
 
 
     def _decode_actions(self, action_data):
+        # Cache players and they slot number to improve performance
+        players = dict((p.slot, p) for p in self.players)
         data_length = len(action_data)
         buf = StringIO(action_data)
         while buf.tell() != data_length:
@@ -125,14 +127,10 @@ class Replay(object):
                 if action_cls is None:
                     continue
                 action = action_cls(tick)
-                player = self.get_player(player_id)
+                player = players[player_id]
                 player.actions.append(action)
                 n = action.read(buf)
                 block_length -= n
-
-    def get_player(self, id):
-        return [p for p in self.players if p.slot == id][0]
-
 
 
 class Player(object):
