@@ -1,4 +1,5 @@
 import struct
+import operator
 
 Byte = 'B'
 Word = 'H'
@@ -238,7 +239,10 @@ class Field(object):
     read by that field is used as the length of this field.
 
     `creation_counter` is used so that we can keep track of which fields
-    were created first in the different Actions.
+    were created first in the different Actions.  I find this pretty ugly,
+    it seems like it could possibly thread-unsafe, but if it's good enough
+    for a large project like Django, I imagine it's good enough for my 
+    small project (until I can figure out a better design, that is ;-))
     '''
 
     creation_counter = 0
@@ -254,19 +258,20 @@ class Field(object):
         return '<Field: %s%s>' % (self.size, self.datatype)
 
     def _get_size(self):
-        if isinstance(self.size, int):
-            return self.size
-        elif isinstance(self.size, Field):
+        try:
             return self.size.data
-        else:
-            raise TypeError('"size" must be an int or a Field')
+        except AttributeError:
+            return self.size
 
     def read(self, buf):
         # We call `_get_size()` here instead of in the constructor
         # because if the size is the value of a previous field, we
         # have read that previous field.
-        format = '<%d%s' % (self._get_size(), self.datatype)
-        length = struct.calcsize(format)
+        try:
+            format, length = self.format, self.length
+        except AttributeError:
+            format = '<%d%s' % (self._get_size(), self.datatype)
+            length = struct.calcsize(format)
         s = buf.read(length)
         try:
             t = struct.unpack(format, s)
@@ -274,9 +279,9 @@ class Field(object):
             raise  ReadError('Could not read %d bytes, only %d available'
                             % (length, len(s)))
         # This is not very type-safe, but it's certainly convenient.
-        if len(t) == 1:
-            self.data = t[0]
-        else:
+        try:
+            (self.data,) = t
+        except ValueError:
             self.data = t
         return length
 
@@ -288,8 +293,14 @@ class ActionBase(type):
     their creation_counter (as specified in datatypes.DataType.)
     '''
     def __new__(cls, name, base, attrs):
-        attrs['base_fields'] = dict(ActionBase.get_declared_fields(attrs))
         attrs['name'] = attrs.get('name') or name
+        attrs['base_fields'] = dict(ActionBase.get_declared_fields(attrs))
+        # Optimization: set the _class_ attribute `format` and `length`
+        # for all Fields that have a constant (i.e.: integer) size.
+        for field_cls in attrs['base_fields'].itervalues():
+            if isinstance(field_cls.size, int):
+                field_cls.format = '<%d%s' % (field_cls.size, field_cls.datatype)
+                field_cls.length = struct.calcsize(field_cls.format)
         return super(ActionBase, cls).__new__(cls, name, base, attrs)
 
     def get_declared_fields(attrs):
@@ -320,16 +331,10 @@ class Action(object):
 
     def read(self, buf):
         length = 0
-        fields = self.base_fields.items()
-        fields.sort(cmp=lambda a, b: cmp(a[1].creation_counter,
-                                         b[1].creation_counter))
-        for (field_name, field) in fields:
+        for (field_name, field) in sorted(self.base_fields.iteritems(),
+                                          key=operator.itemgetter(1)):
             length += field.read(buf)
-            try:
-                setter = getattr(self, 'set_' + field_name)
-                setter(field.data)
-            except:
-                setattr(self, field_name, field.data)
+            setattr(self, field_name, field.data)
         return length
 
 
@@ -419,9 +424,6 @@ class ReturnCargo(Action):
 class Train(Action):
     id = 0x1F
     unit_type = Field(Word, 1)
-
-    def set_unit_type(self, x):
-        self.unit_type = unit_types[x]
 
 
 class CancelTrain(Action):
