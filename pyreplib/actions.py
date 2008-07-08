@@ -264,9 +264,8 @@ class Field(object):
             return self.size
 
     def read(self, buf):
-        # We call `_get_size()` here instead of in the constructor
-        # because if the size is the value of a previous field, we
-        # have read that previous field.
+        # If the Field has the `format` and `size` class attributes,
+        # use them.  Otherwise, compute them.
         try:
             format, length = self.format, self.length
         except AttributeError:
