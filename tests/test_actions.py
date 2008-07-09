@@ -9,6 +9,10 @@ except ImportError:
 from pyreplib.actions import *
 
 
+__all__ = ['TestActionBase', 'TestSelect', 'TestShiftSelect',
+           'TestShiftDeselect', 'TestBuild', 'TestVision', 'TestAlly',
+           'TestHotkey', 'TestMove']
+
 class TestActionBase(unittest.TestCase):
     def setUp(self):
         class TestAction(object):
