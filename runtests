@@ -2,6 +2,6 @@
 
 import unittest
 
-from tests.test_replay import TestReplay, TestHelperFunctions
+from tests.test_replay import *
 
 unittest.main()
