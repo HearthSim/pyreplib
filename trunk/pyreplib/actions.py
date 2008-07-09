@@ -1,6 +1,16 @@
 import struct
 import operator
 
+__all__ = ['ActionBase', 'Action', 'action_classes', 'Select',
+           'ShiftSelect', 'ShiftDeselect', 'Build', 'Vision', 'Ally',
+           'Hotkey', 'Move', 'Attack', 'Cancel', 'CancelHatch', 'Stop',
+           'ReturnCargo', 'Train', 'CancelTrain', 'Cloak', 'Decloak',
+           'Hatch', 'Unsiege', 'Siege', 'BuildInterceptor', 'UnloadAll',
+           'Unload', 'MergeArchon', 'HoldPosition', 'Burrow', 'Unburrow',
+           'CancelNuke', 'Lift', 'Research', 'CancelResearch', 'Upgrade',
+           'Morph', 'Stim', 'LeaveGame', 'MergeDarkArchon', 'Byte', 'Word',
+           'DWord', 'Field']
+
 Byte = 'B'
 Word = 'H'
 DWord = 'I'
@@ -256,6 +266,9 @@ class Field(object):
 
     def __repr__(self):
         return '<Field: %s%s>' % (self.size, self.datatype)
+
+    def __cmp__(self, other):
+        return self.creation_counter - other.creation_counter
 
     def read(self, buf):
         # If the Field has the `format` and `size` class attributes,
