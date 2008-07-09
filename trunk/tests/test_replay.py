@@ -4,6 +4,8 @@ import struct
 
 from pyreplib import replay
 
+__all__ = ['TestHelperFunctions', 'TestReplay']
+
 # Need to put in the useless bytes, so we replace 'x' (pad byte) with 'B'.
 PLAYER_PACK_FORMAT = replay.PLAYER_STRUCT_FORMAT.replace('x', 'B')
 HEADER_PACK_FORMAT = replay.HEADER_STRUCT_FORMAT.replace('x', 'B')

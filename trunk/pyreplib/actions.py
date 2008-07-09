@@ -359,10 +359,13 @@ class ShiftDeselect(Action):
 
 class Build(Action):
     id = 0x0C
-    building_type = Field(Byte, 1)
+    building_type_id = Field(Byte, 1)
     pos_x = Field(Word, 1)
     pos_y = Field(Word, 1)
     building_id = Field(Word, 1)
+
+    def get_building_type(self):
+        return unit_types[self.building_type_id]
 
 
 class Vision(Action):
@@ -396,8 +399,11 @@ class Attack(Action):
     pos_y = Field(Word, 1)
     unit_id = Field(Word, 1) # 0xFFFF for moving to X/Y, unit id if following
     unknown = Field(Word, 1)
-    type = Field(Byte, 1) # Taken from `attacks`
+    type_id = Field(Byte, 1) # Taken from `attacks`
     shifted = Field(Byte, 1) # 0x00 for normal, 0x01 for shifted attack
+
+    def get_type(self):
+        return attack[self.type_id]
 
 
 class Cancel(Action):
@@ -422,7 +428,10 @@ class ReturnCargo(Action):
 
 class Train(Action):
     id = 0x1F
-    unit_type = Field(Word, 1)
+    unit_type_id = Field(Word, 1)
+
+    def get_unit_type(self):
+        return unit_types[self.unit_type_id]
 
 
 class CancelTrain(Action):
@@ -443,7 +452,10 @@ class Decloak(Action):
 
 class Hatch(Action):
     id = 0x23
-    unit_type = Field(Word, 1)
+    unit_type_id = Field(Word, 1)
+
+    def get_unit_type(self):
+        return unit_types[self.unit_type_id]
 
 
 class Unsiege(Action):
@@ -520,7 +532,10 @@ class Upgrade(Action):
 
 class Morph(Action):
     id = 0x35
-    building_type = Field(Word, 1)
+    building_type_id = Field(Word, 1)
+
+    def get_building_type(self):
+        return unit_types[self.building_type_id]
 
 
 class Stim(Action):
