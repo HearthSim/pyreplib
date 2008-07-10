@@ -34,9 +34,9 @@ class TestActionBase(unittest.TestCase):
         self.assert_('field3' in self.action_cls.base_fields)
 
         # Ensure that the fields will be in order when read
-        self.assert_(self.action_cls.field1.creation_counter <
-                     self.action_cls.field2.creation_counter <
-                     self.action_cls.field3.creation_counter)
+        self.assert_(self.action_cls.field1 <
+                     self.action_cls.field2 <
+                     self.action_cls.field3)
 
         # Check Fields' attributes
         self.assertEquals(self.action_cls.field1.datatype, Byte)

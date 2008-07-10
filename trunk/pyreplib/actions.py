@@ -15,6 +15,7 @@ Byte = 'B'
 Word = 'H'
 DWord = 'I'
 
+# Hex to string mappings {{{
 attacks = {
     0x00: 'Move with right click',
     0x06: 'Move by click move icon',
@@ -236,7 +237,7 @@ unit_types = {
     0xC5: 'Interceptor',
     0xC6: 'Interceptor/Scarab',
 }
-
+# }}}
 
 class ReadError(Exception):
     pass
