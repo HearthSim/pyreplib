@@ -1,16 +1,6 @@
 import struct
 import operator
 
-__all__ = ['ActionBase', 'Action', 'action_classes', 'Select',
-           'ShiftSelect', 'ShiftDeselect', 'Build', 'Vision', 'Ally',
-           'Hotkey', 'Move', 'Attack', 'Cancel', 'CancelHatch', 'Stop',
-           'ReturnCargo', 'Train', 'CancelTrain', 'Cloak', 'Decloak',
-           'Hatch', 'Unsiege', 'Siege', 'BuildInterceptor', 'UnloadAll',
-           'Unload', 'MergeArchon', 'HoldPosition', 'Burrow', 'Unburrow',
-           'CancelNuke', 'Lift', 'Research', 'CancelResearch', 'Upgrade',
-           'Morph', 'Stim', 'LeaveGame', 'MergeDarkArchon', 'Byte', 'Word',
-           'DWord', 'Field']
-
 Byte = 'B'
 Word = 'H'
 DWord = 'I'
@@ -378,7 +368,8 @@ class Build(Action):
     building_id = Field(Word, 1) # Make a mapping for further reference?
 
     def get_building_type(self):
-        return unit_types[self.building_type_id]
+        return unit_types.get(self.building_type_id,
+                              hex(self.building_type_id))
 
 
 class Vision(Action):
@@ -416,7 +407,7 @@ class Attack(Action):
     shifted = Field(Byte, 1) # 0x00 for normal, 0x01 for shifted attack
 
     def get_type(self):
-        return attack[self.type_id]
+        return attacks.get(self.type_id, hex(self.type_id))
 
 
 class Cancel(Action):
