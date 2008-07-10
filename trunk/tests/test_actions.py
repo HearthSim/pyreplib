@@ -9,10 +9,6 @@ except ImportError:
 from pyreplib.actions import *
 
 
-__all__ = ['TestActionBase', 'TestSelect', 'TestShiftSelect',
-           'TestShiftDeselect', 'TestBuild', 'TestVision', 'TestAlly',
-           'TestHotkey', 'TestMove']
-
 class TestActionBase(unittest.TestCase):
     def setUp(self):
         class TestAction(object):
@@ -119,10 +115,11 @@ class TestBuild(unittest.TestCase):
         self.assertEquals(instance.building_id, 1)
 
     def test_get_building_type(self):
-        buf = StringIO(struct.pack('< B H H H', 0x6A, 0, 0, 1))
         instance = Build(0)
-        instance.read(buf)
+        instance.building_type_id = 0x6A
         self.assertEquals(instance.get_building_type(), 'Command Center')
+        instance.building_type_id = 0xFF
+        self.assertEquals(instance.get_building_type(), '0xff')
 
 
 class TestVision(unittest.TestCase):
@@ -181,3 +178,12 @@ class TestMove(unittest.TestCase):
         self.assertEquals(instance.unit_id, 1)
         self.assertEquals(instance.unknown1, 0)
         self.assertEquals(instance.unknown2, 0)
+
+
+class TestAttack(unittest.TestCase):
+    def test_get_type(self):
+        instance = Attack(0)
+        instance.type_id = 0
+        self.assertEquals(instance.get_type(), 'Move with right click')
+        instance.type_id = 0xFF
+        self.assertEquals(instance.get_type(), '0xff')
