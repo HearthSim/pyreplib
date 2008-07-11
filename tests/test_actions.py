@@ -187,3 +187,302 @@ class TestAttack(unittest.TestCase):
         self.assertEquals(instance.get_type(), 'Move with right click')
         instance.type_id = 0xFF
         self.assertEquals(instance.get_type(), '0xff')
+
+    def test_read(self):
+        buf1 = StringIO(struct.pack('<HHHHBB', 100, 100, 0xFFFF, 0, 0, 0))
+        buf2 = StringIO(struct.pack('<HHHHBB', 200, 200, 0xAAAA, 0, 8, 1))
+        instance = Attack(0)
+
+        n = instance.read(buf1)
+        self.assertEquals(n, 10)
+        self.assertEquals(instance.pos_x, 100)
+        self.assertEquals(instance.pos_y, 100)
+        self.assertEquals(instance.unit_id, 0xFFFF)
+        self.assertEquals(instance.unknown, 0)
+        self.assertEquals(instance.type_id, 0)
+        self.assertEquals(instance.shifted, 0)
+
+        n = instance.read(buf2)
+        self.assertEquals(n, 10)
+        self.assertEquals(instance.pos_x, 200)
+        self.assertEquals(instance.pos_y, 200)
+        self.assertEquals(instance.unit_id, 0xAAAA)
+        self.assertEquals(instance.unknown, 0)
+        self.assertEquals(instance.type_id, 8)
+        self.assertEquals(instance.shifted, 1)
+
+
+class TestCancel(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = Cancel(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+
+class TestCancelHatch(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = CancelHatch(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+class TestStop(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 27))
+        instance = Stop(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 27)
+
+
+class TestReturnCargo(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 27))
+        instance = ReturnCargo(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 27)
+
+
+class TestTrain(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<H', 0))
+        instance = Train(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 2)
+        self.assertEquals(instance.unit_type_id, 0)
+
+    def test_get_unit_type(self):
+        instance = Train(0)
+        instance.unit_type_id = 0
+        self.assertEquals(instance.get_unit_type(), 'Marine')
+        instance.unit_type_id = 0xEE
+        self.assertEquals(instance.get_unit_type(), '0xee')
+
+
+class TestCancelTrain(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<2B', 0, 1))
+        instance = CancelTrain(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 2)
+        self.assertEquals(instance.unknown, (0, 1))
+
+
+class TestCloak(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 1))
+        instance = Cloak(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 1)
+
+
+class TestDecloak(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 1))
+        instance = Decloak(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 1)
+
+
+class TestHatch(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<H', 0x25))
+        instance = Hatch(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 2)
+        self.assertEquals(instance.unit_type_id, 0x25)
+
+    def test_get_unit_type(self):
+        instance = Hatch(0)
+        instance.unit_type_id = 0x25
+        self.assertEquals(instance.get_unit_type(), 'Zergling')
+
+
+class TestSiege(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = Siege(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 0)
+
+
+class TestUnsiege(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = Unsiege(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 0)
+
+
+class TestBuildInterceptor(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = BuildInterceptor(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+
+class TestUnloadAll(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = UnloadAll(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 0)
+
+
+class TestUnload(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<2B', 0, 1))
+        instance = Unload(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 2)
+        self.assertEquals(instance.unknown, (0, 1))
+
+
+class TestMergeArchon(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = MergeArchon(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+
+class TestHoldPosition(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = HoldPosition(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 0)
+
+
+class TestBurrow(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = Burrow(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 0)
+
+
+class TestUnburrow(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = Unburrow(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.unknown, 0)
+
+
+class TestCancelNuke(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = CancelNuke(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+
+class TestLift(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<4B', 0, 1, 2, 3))
+        instance = Lift(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 4)
+        self.assertEquals(instance.unknown, (0, 1, 2, 3))
+
+
+class TestResearch(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = Research(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.research_id, 0)
+
+    def get_get_research(self):
+        instance = Research(0)
+        instance.research_id = 0
+        self.assertEquals(instance.get_research(), 'Stim Pack')
+        instance.research_id = 0xff
+        self.assertEquals(instance.get_research(), '0xff')
+
+
+class TestCancelResearch(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = CancelResearch(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+
+class TestUpgrade(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 0))
+        instance = Upgrade(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.upgrade_id, 0)
+
+    def test_get_upgrade(self):
+        instance = Upgrade(0)
+        instance.upgrade_id = 0
+        self.assertEquals(instance.get_upgrade(), 'Terran Infantry Armor')
+        instance.upgrade_id = 0xff
+        self.assertEquals(instance.get_upgrade(), '0xff')
+
+
+class TestMorph(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<H', 0))
+        instance = Morph(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 2)
+        self.assertEquals(instance.building_type_id, 0)
+
+    def test_get_building_type(self):
+        instance = Morph(0)
+        instance.building_type_id = 0x83
+        self.assertEquals(instance.get_building_type(), 'Hatchery')
+        instance.building_type_id = 0xFF
+        self.assertEquals(instance.get_building_type(), '0xff')
+
+
+class TestStim(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = Stim(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
+
+
+class TestLeaveGame(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO(struct.pack('<B', 1))
+        instance = LeaveGame(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 1)
+        self.assertEquals(instance.reason_id, 1)
+
+    def test_reason(self):
+        instance = LeaveGame(0)
+        instance.reason_id = 1
+        self.assertEquals(instance.get_reason(), 'Quit')
+        instance.reason_id = 6
+        self.assertEquals(instance.get_reason(), 'Drop')
+        instance.reason_id = 0
+        self.assertEquals(instance.get_reason(), '')
+
+
+class TestMergeDarkArchon(unittest.TestCase):
+    def test_read(self):
+        buf = StringIO('')
+        instance = MergeDarkArchon(0)
+        n = instance.read(buf)
+        self.assertEquals(n, 0)
