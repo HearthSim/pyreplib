@@ -435,7 +435,7 @@ class Train(Action):
     unit_type_id = Field(Word, 1)
 
     def get_unit_type(self):
-        return unit_types[self.unit_type_id]
+        return unit_types.get(self.unit_type_id, hex(self.unit_type_id))
 
 
 class CancelTrain(Action):
@@ -459,7 +459,7 @@ class Hatch(Action):
     unit_type_id = Field(Word, 1)
 
     def get_unit_type(self):
-        return unit_types[self.unit_type_id]
+        return unit_types.get(self.unit_type_id, hex(self.unit_type_id))
 
 
 class Unsiege(Action):
@@ -523,6 +523,9 @@ class Research(Action):
     id = 0x30
     research_id = Field(Byte, 1) # Taken from `researches` 
 
+    def get_research(self):
+        return researches.get(self.research_id, hex(self.research_id))
+
 
 class CancelResearch(Action):
     id = 0x31
@@ -533,13 +536,17 @@ class Upgrade(Action):
     id = 0x32
     upgrade_id = Field(Byte, 1) # Taken from `upgrades`
 
+    def get_upgrade(self):
+        return upgrades.get(self.upgrade_id, hex(self.upgrade_id))
+
 
 class Morph(Action):
     id = 0x35
     building_type_id = Field(Word, 1)
 
     def get_building_type(self):
-        return unit_types[self.building_type_id]
+        return unit_types.get(self.building_type_id,
+                              hex(self.building_type_id))
 
 
 class Stim(Action):
@@ -548,7 +555,15 @@ class Stim(Action):
 
 class LeaveGame(Action):
     id = 0x57
-    reason = Field(Byte, 1) # 0x01 for quit, 0x06 for drop
+    reason_id = Field(Byte, 1) # 0x01 for quit, 0x06 for drop
+
+    def get_reason(self):
+        if self.reason_id == 1:
+            return 'Quit'
+        elif self.reason_id == 6:
+            return 'Drop'
+        else:
+            return ''
 
 
 class MergeDarkArchon(Action):
