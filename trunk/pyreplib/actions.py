@@ -362,10 +362,10 @@ class ShiftDeselect(Action):
 
 class Build(Action):
     id = 0x0C
-    building_type_id = Field(Byte, 1)
+    construction_type_id = Field(Byte, 1)
     pos_x = Field(Word, 1)
     pos_y = Field(Word, 1)
-    building_id = Field(Word, 1) # Make a mapping for further reference?
+    building_type_id = Field(Word, 1)
 
     def get_building_type(self):
         return unit_types.get(self.building_type_id,

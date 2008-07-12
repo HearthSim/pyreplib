@@ -105,14 +105,14 @@ class TestShiftDeselect(unittest.TestCase):
 
 class TestBuild(unittest.TestCase):
     def test_read(self):
-        valid = StringIO(struct.pack('< B H H H', 0x6A, 0, 0, 1))
+        valid = StringIO(struct.pack('< B H H H', 1, 0, 0, 0x6A))
         instance = Build(0)
         n = instance.read(valid)
         self.assertEquals(n, 7)
-        self.assertEquals(instance.building_type_id, 0x6A)
+        self.assertEquals(instance.construction_type_id, 1)
         self.assertEquals(instance.pos_x, 0)
         self.assertEquals(instance.pos_y, 0)
-        self.assertEquals(instance.building_id, 1)
+        self.assertEquals(instance.building_type_id, 0x6A)
 
     def test_get_building_type(self):
         instance = Build(0)
