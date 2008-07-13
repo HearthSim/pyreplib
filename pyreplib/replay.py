@@ -64,6 +64,16 @@ class Replay(object):
     def __repr__(self):
         return str(self)
 
+    def _get_replay_id(self):
+        return self._replay_id
+
+    def _set_replay_id(self, value):
+        if value != 0x53526572:
+            raise InvalidReplayException('Replay id is not 0x53526572')
+        else:
+            self._replay_id = value
+    replay_id = property(_get_replay_id, _set_replay_id)
+
     def get_engine_name(self):
         '''English name of the replay's Starcraft engine'''
         if self.game_engine == 0:
