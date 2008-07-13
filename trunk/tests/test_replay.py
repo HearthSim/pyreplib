@@ -43,11 +43,13 @@ class TestReplay(unittest.TestCase):
         ))
 
     def test_replay_id(self):
+        def _test(value):
+            self.rep.replay_id = value
         # Invalid ids
         ids = (None, -1, 0, -1, 3.2)
         for id in ids:
-            self.rep.replay_id = id
-            self.assert_(not self.rep.is_valid())
+            self.assertRaises(replay.InvalidReplayException,
+                              lambda: _test(id))
 
         # Valid id
         self.rep.replay_id = 0x53526572
