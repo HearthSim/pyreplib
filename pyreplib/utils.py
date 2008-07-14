@@ -55,3 +55,13 @@ def building_distribution(player):
             building_name = action.get_building_type()
             distribution[building_name] = 1 + distribution.get(building_name, 0)
     return distribution
+
+def action_distribution(player):
+    '''
+    Return a dictionary containing the action types and the number of time they
+    were executed during the game for `player`.
+    '''
+    distribution = {}
+    for action in player.actions:
+        distribution[action.name] = distribution.get(action.name, 0) + 1
+    return distribution
