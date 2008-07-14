@@ -174,30 +174,3 @@ class Player(object):
         else:
             return ''
     race_name = property(get_race_name)
-
-    def actions_per_minute(self):
-        def _get_actions():
-            one_minute = 60 * TICKS_PER_SECOND
-            minute = one_minute
-            n = 0
-            for action in self.actions:
-                if action.tick < minute:
-                    n += 1
-                else:
-                    yield n
-                    n = 0
-                    minute += one_minute
-
-        if self.__actions_per_minute is None:
-            self.__actions_per_minute = list(_get_actions())
-        return self.__actions_per_minute
-
-    def apm_stats(self):
-        '''
-        Returns a tuple containing the minimum, average and maximum APM.
-        '''
-        number_of_actions = self.actions_per_minute()
-        return (min(number_of_actions),
-                avg(number_of_actions),
-                max(number_of_actions))
-
