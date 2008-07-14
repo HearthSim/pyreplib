@@ -1,8 +1,6 @@
 def avg(L):
-    if not L:
-        return 0
-    else:
-        return sum(L) / len(L)
+    if L:
+        return sum(L) / float(len(L))
 
 def actions_per_minute(player):
     '''
@@ -16,8 +14,9 @@ def actions_per_minute(player):
             n += 1
         else:
             yield n
-            n = 0
+            n = 1
             minute += one_minute
+    yield n
 
 def apm_stats(player):
     '''
