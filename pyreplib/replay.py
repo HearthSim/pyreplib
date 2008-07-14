@@ -45,9 +45,6 @@ def from_nullstr(s):
         return s[:i]
 
 
-def avg(L):
-    return sum(L) / len(L)
-
 class InvalidReplayException(Exception): pass
 
 
