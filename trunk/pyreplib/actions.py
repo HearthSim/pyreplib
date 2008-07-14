@@ -12,7 +12,7 @@ attacks = {
     0x08: 'Attack',
     0x09: 'Gather',
     0x0E: 'Attack Move',
-    0x13: 'Failed Casting (?)',
+    0x13: 'Failed Casting',
     0x1B: 'Infest CC',
     0x22: 'Repair',
     0x27: 'Clear Rally',

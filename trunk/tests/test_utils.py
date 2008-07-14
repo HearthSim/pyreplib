@@ -82,3 +82,25 @@ class TestDistribution(unittest.TestCase):
         self.assertEquals(distribution['Drone'], 2)
         self.assertEquals(distribution['Hydralisk'], 2)
         self.assertEquals(distribution['Ultralisk'], 1)
+
+    def test_action_distribution(self):
+        self.player.actions = [
+            actions.Build(0),
+            actions.Train(0),
+            actions.Train(0),
+            actions.Hotkey(0),
+            actions.Hotkey(0),
+            actions.Train(0),
+            actions.Move(0),
+            actions.Move(0),
+            actions.Select(0),
+            actions.Move(0),
+            actions.Select(0),
+        ]
+        distribution = utils.action_distribution(self.player)
+        self.assertEquals(len(distribution), 5)
+        self.assertEquals(distribution['Build'], 1)
+        self.assertEquals(distribution['Train'], 3)
+        self.assertEquals(distribution['Hotkey'], 2)
+        self.assertEquals(distribution['Move'], 3)
+        self.assertEquals(distribution['Select'], 2)
