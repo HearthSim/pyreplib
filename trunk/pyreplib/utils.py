@@ -1,3 +1,5 @@
+from pyreplib import actions
+
 def avg(L):
     if L:
         return sum(L) / float(len(L))
@@ -25,5 +27,31 @@ def apm_stats(player):
     '''
     actions = list(actions_per_minute(player))
     return (min(actions),
-            avg(actions),
+            round(avg(actions)),
             max(actions))
+
+def unit_distribution(player):
+    '''
+    Return a dictionary containing the unit types and the number produced
+    during the game for `player`.
+    '''
+    distribution = {}
+    for action in player.actions:
+        # Protoss and Terrans train, Zerg hatch.
+        if isinstance(action, (actions.Train, actions.Hatch)):
+            unit_name = action.get_unit_type()
+            distribution[unit_name] = 1 + distribution.get(unit_name, 0)
+    return distribution
+
+def building_distribution(player):
+    '''
+    Return a dictionary containing the building types and the number produced
+    during the game for `player`.
+    '''
+    distribution = {}
+    for action in player.actions:
+        # Protoss, Terrans and Zerg build, Zerg also morph.
+        if isinstance(action, (actions.Build, actions.Morph)):
+            building_name = action.get_building_type()
+            distribution[building_name] = 1 + distribution.get(building_name, 0)
+    return distribution
