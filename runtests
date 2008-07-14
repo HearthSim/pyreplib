@@ -4,5 +4,6 @@ import unittest
 
 from tests.test_actions import *
 from tests.test_replay import *
+from tests.test_utils import *
 
 unittest.main()
