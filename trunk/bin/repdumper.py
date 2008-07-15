@@ -5,7 +5,7 @@ from pyreplib import replay
 
 
 VERSION = (0, 1, 0)
-AVAILABLE_FORMATS = ['json', 'xml', 'yaml']
+AVAILABLE_FORMATS = ['json', 'yaml']
 
 def action_to_dict(action):
     '''
@@ -69,6 +69,13 @@ def dump_json(replay):
         from simplejson import dumps as encode
     print encode(replay_to_dict(replay))
 
+
+def dump_yaml(replay):
+    import yaml
+    print yaml.safe_dump(replay_to_dict(replay))
+
+
+
 def version_to_string(seq):
     return '.'.join(map(str, seq))
 
@@ -98,6 +105,8 @@ def main():
     rep = replay.Replay(args[0])
     if options.format == 'json':
         dump_json(rep)
+    elif options.format == 'yaml':
+        dump_yaml(rep)
 
 if __name__ == '__main__':
     main()
