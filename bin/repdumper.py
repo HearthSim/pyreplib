@@ -5,7 +5,7 @@ from pyreplib import replay
 
 
 VERSION = (0, 1, 0)
-AVAILABLE_FORMATS = ['json', 'yaml']
+AVAILABLE_FORMATS = ['json', 'yaml', 'xml']
 
 def action_to_dict(action):
     '''
@@ -75,6 +75,43 @@ def dump_yaml(replay):
     print yaml.safe_dump(replay_to_dict(replay))
 
 
+def dump_xml(replay):
+    from xml.sax.saxutils import XMLGenerator
+    d = replay_to_dict(replay)
+    players = d.pop('player_slots')
+    gen = XMLGenerator(encoding="utf-8")
+    gen.startDocument()
+    gen.startElement('replay', {})
+
+    for key, value in d.iteritems():
+        gen.startElement(key, {})
+        gen.characters(str(value))
+        gen.endElement(key)
+
+    gen.startElement('players', {})
+    for player in players:
+        actions = player.pop('actions')
+        gen.startElement('player', {})
+        for key, value in player.iteritems():
+            gen.startElement(key, {})
+            gen.characters(str(value))
+            gen.endElement(key)
+
+        gen.startElement('actions', {})
+        for action in actions:
+            gen.startElement('action', {})
+            for key, value in action.iteritems():
+                gen.startElement(key, {})
+                gen.characters(str(value))
+                gen.endElement(key)
+            gen.endElement('action')
+        gen.endElement('actions')
+        gen.endElement('player')
+    gen.endElement('players')
+
+    gen.endElement('replay')
+    gen.endDocument()
+
 
 def version_to_string(seq):
     return '.'.join(map(str, seq))
@@ -107,6 +144,8 @@ def main():
         dump_json(rep)
     elif options.format == 'yaml':
         dump_yaml(rep)
+    elif options.format == 'xml':
+        dump_xml(rep)
 
 if __name__ == '__main__':
     main()
