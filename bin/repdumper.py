@@ -79,7 +79,7 @@ def dump_xml(replay):
     from xml.sax.saxutils import XMLGenerator
     d = replay_to_dict(replay)
     players = d.pop('player_slots')
-    gen = XMLGenerator(encoding="utf-8")
+    gen = XMLGenerator()
     gen.startDocument()
     gen.startElement('replay', {})
 
