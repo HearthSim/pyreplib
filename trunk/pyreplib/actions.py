@@ -555,6 +555,7 @@ class Stim(Action):
 
 class LeaveGame(Action):
     id = 0x57
+    name = 'Leave Game'
     reason_id = Field(Byte, 1) # 0x01 for quit, 0x06 for drop
 
     def get_reason(self):
