@@ -1,0 +1,30 @@
+pyreplib is a Python library to read Starcraft's and Brood War's replay
+files.
+
+Installation
+============
+
+Requirements:
+- Python 2.3 or better
+- A C compiler
+
+$ sudo python setup.py install
+
+
+Usage
+=====
+
+>>> from pyreplib import replay, utils
+>>> rep = replay.Replay('starcraft/sea vs savior savior win2.rep')
+>>> rep.players
+[<Player: MBC_Sea[Shield] (Terran)>, <Player: CJ sAviOr (Zerg)>]
+>>> rep.map_name
+'\x04Andromeda \x051.0'
+>>> rep.date
+datetime.datetime(2008, 6, 28, 15, 5, 16)
+>>> utils.apm_stats(rep.players[0])
+(80, 300.0, 413)
+>>> utils.unit_distribution(rep.players[0])
+{'Dropship': 3, 'Firebat': 34, 'Medic': 48, 'SCV': 82, 'Marine': 599,
+'Science Vessel': 43}
+>>> 
