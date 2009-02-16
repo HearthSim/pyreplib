@@ -72,7 +72,7 @@ class Replay(object):
     replay_id = property(_get_replay_id, _set_replay_id)
 
     def get_engine_name(self):
-        '''English name of the replay's Starcraft engine'''
+        """English name of the replay's Starcraft engine"""
         if self.game_engine == 0:
             return 'Starcraft'
         else:
@@ -132,7 +132,8 @@ class Replay(object):
                 action_cls = action_classes.get(action_id)
                 # Skip over unknown actions
                 if action_cls is None:
-                    continue
+                    buf.read(block_length)
+                    break
                 action = action_cls(tick)
                 player = players[player_id]
                 player.actions.append(action)
@@ -158,8 +159,8 @@ class Player(object):
         return '<Player: %s (%s)>' % (self.name, self.race_name)
 
     def get_race_name(self):
-        '''Return english description of player's race.  jca's lib indicates
-        that there's a race 6, but I (nor he) have any idea what it does.'''
+        """Return english description of player's race.  jca's lib indicates
+        that there's a race 6, but I (nor he) have any idea what it does."""
         if self.race == 0:
             return 'Zerg'
         elif self.race == 1:
